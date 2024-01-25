@@ -1,0 +1,130 @@
+<?php
+
+if(!empty($_SERVER['argv'][1]) && $_SERVER['argv'][1] == "make:controller"){
+
+    // create controller
+    if(!empty($_SERVER['argv'][2])){
+        $arrFile = explode('/', $_SERVER['argv'][2]);
+        $path = '';
+        $code = '';
+        if(count($arrFile) == 1){
+            $path = "./app/controllers/".$arrFile[0].".php";
+            $name = $arrFile[0];
+        }else{
+            foreach ($arrFile as $item) {
+                $path .= $item.'/';
+                $name = $item;
+            }
+            $path = trim($path, '/').'.php';
+            $path = "./app/controllers/".$path;
+        }
+        if(!file_exists($path)){
+            $code .= "<?php \n";
+            $code .= "use core\Validate; \n";
+            $code .= 'class '.$name.' extends Controller{'." \n";
+            $code .= 'public $__model, $__data=[];'." \n";
+            $code .= 'public function __construct(){'." \n";
+            $code .= '$this->__model = $this->model("");'." \n";
+            $code .= '}'." \n";
+            $code .= 'function index(){'." \n";
+            $code .= 'echo "index";'." \n";
+            $code .= '}'." \n";
+            $code .= 'function lists(){'." \n";
+            $code .= 'echo "lists";'." \n";
+            $code .= '}'." \n";
+            $code .= '}'." \n";
+            $code .= '?>'." \n";
+                file_put_contents($path, html_entity_decode($code));
+                echo "\033[32m Create new controller success \033[0m\n";
+        }else{
+            echo "\033[31m This controller already exist \033[0m\n";
+        }
+    }else{
+        echo "\033[31m Please write name file controller \033[0m\n";
+    }
+
+}elseif (!empty($_SERVER['argv'][1]) && $_SERVER['argv'][1] == "make:model") {
+
+    // make model
+    if(!empty($_SERVER['argv'][2])){
+        $arrFile = explode('/', $_SERVER['argv'][2]);
+        $path = '';
+        $code = '';
+        if(count($arrFile) == 1){
+            $path = "./app/models/".$arrFile[0].".php";
+            $name = $arrFile[0];
+        }else{
+            foreach ($arrFile as $item) {
+                $path .= $item.'/';
+                $name = $item;
+            }
+            $path = trim($path, '/').'.php';
+            $path = "./app/models/".$path;
+        }
+        if(!file_exists($path)){
+            $code .= "<?php \n";
+            $code .= "class ".$name." extends Model{ \n"; 
+            $code .= "public function allUsers(){ \n";
+            $code .= "return 'data'; \n";
+            $code .= "} \n";
+            $code .= "} \n";
+            $code .= "?> \n";
+                file_put_contents($path, html_entity_decode($code));
+                echo "\033[32m Create new model success \033[0m\n";
+        }else{
+            echo "\033[31m This model already exist \033[0m\n";
+        }
+    }else{
+        echo "\033[31m Please write name file model \033[0m\n";
+    }
+
+}elseif (!empty($_SERVER['argv'][1]) && substr($_SERVER['argv'][1], 0, 6) == "remove"){
+
+    // remove file mvc
+    $arrMvc = explode(':', $_SERVER['argv'][1]);
+    $mvc = $arrMvc[1];
+    $itemMvc = [
+        'controller',
+        'model',
+        'view',
+        'middleware'
+    ];
+
+    if(in_array($mvc, $itemMvc)){
+
+        if(!empty($_SERVER['argv'][2])){
+            $arrFile = explode('/', $_SERVER['argv'][2]);
+            $path = '';
+            $code = '';
+            if(count($arrFile) == 1){
+                $path = "./app/".$mvc."s/".$arrFile[0].".php";
+            }else{
+                foreach ($arrFile as $item) {
+                    $path .= $item.'/';
+                }
+                $path = trim($path, '/').'.php';
+                $path = "./app/".$mvc."s/".$path;
+            }
+            if(file_exists($path)){
+                unlink($path);
+                echo "\033[32m Remove this ".$mvc." success \033[0m\n";
+            }else{
+                echo "\033[31m This file not exist \033[0m\n";
+            }
+        }else{
+            echo "\033[31m Please write name file ".$mvc." \033[0m\n";
+        }
+
+    }else{
+        echo "\033[31m Code remove error \033[0m\n";
+    }
+
+}else{
+
+    // error code
+    echo "\033[31m Not understand this code \033[0m\n";
+
+}
+
+
+?>
